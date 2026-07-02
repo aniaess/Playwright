@@ -1,7 +1,8 @@
 from playwright.sync_api import expect
+from pages.todo_page import TodoPage
 
 
-def test_add_todo(todo_page):
+def test_add_todo(page):
     """
     Verify that a user can add multiple todo items successfully.
 
@@ -13,41 +14,41 @@ def test_add_todo(todo_page):
     - All added todo items are visible in the list
     """
 
-    # todo = TodoPage(page)
-    #
-    # todo.open()
+    todo = TodoPage(page)
+
+    todo.open_todo_app()
 
     # ADD
-    todo_page.add_todo("Learn Playwright")
-    todo_page.add_todo("Learn Python")
-    todo_page.add_todo("Learn Pytest")
+    todo.add_todo("Learn Playwright")
+    todo.add_todo("Learn Python")
+    todo.add_todo("Learn Pytest")
 
-    expect(todo_page.todo_items).to_have_count(3)
+    expect(todo.todo_items).to_have_count(3)
 
     # COMPLETE
-    todo_page.complete_todo("Learn Playwright")
+    todo.complete_todo("Learn Playwright")
 
     expect(
-        todo_page.todo_items.nth(0).get_by_role("checkbox")
+        todo.todo_items.nth(0).get_by_role("checkbox")
     ).to_be_checked()
 
     # ACTIVE FILTER
-    todo_page.filter_active()
-    expect(todo_page.todo_items).to_have_count(2)
+    todo.filter_active()
+    expect(todo.todo_items).to_have_count(2)
 
     # COMPLETED FILTER
-    todo_page.filter_completed()
-    expect(todo_page.todo_items).to_have_count(1)
+    todo.filter_completed()
+    expect(todo.todo_items).to_have_count(1)
 
     # CLEAR COMPLETED
-    todo_page.clear_completed()
-    expect(todo_page.todo_items).to_have_count(0)
+    todo.clear_completed()
+    expect(todo.todo_items).to_have_count(0)
 
     # NEW DELETE STEP
-    todo_page.filter_all()
-    todo_page.add_todo("To be deleted")
+    todo.filter_all()
+    todo.add_todo("To be deleted")
 
-    expect(todo_page.todo_items.filter(has_text="To be deleted")).to_be_visible()
+    expect(todo.todo_items.filter(has_text="To be deleted")).to_be_visible()
 
-    todo_page.delete_todo_by_text("To be deleted")
-    expect(todo_page.todo_items).to_have_count(2)
+    todo.delete_todo_by_text("To be deleted")
+    expect(todo.todo_items).to_have_count(2)

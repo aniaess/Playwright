@@ -1,14 +1,28 @@
 import pytest
-from pages.todo_page import TodoPage
+from utils.logger import logger
 
+@pytest.fixture(scope="function")
+def page(playwright):
+    logger.info("========== TEST STARTED ==========")
+    browser = playwright.chromium.launch(headless=False)
+    context = browser.new_context()
+    page = context.new_page()
 
-@pytest.fixture
-def todo_page(page):
-    print("Setting up TodoPage fixture...")
+    yield page
 
-    todo = TodoPage(page)
-    todo.open()
+    context.close()
+    browser.close()
+    logger.info("TEST FINISHED")
 
-    yield todo
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
 
-    print("\nCleaning up TodoPage fixture...")
+    if report.when == "call":
+        if report.passed:
+            logger.info("========== TEST PASSED ==========")
+
+        elif report.failed:
+            logger.error("========== TEST FAILED ==========")
+            logger.error(report.longreprtext)

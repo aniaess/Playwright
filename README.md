@@ -79,6 +79,19 @@ The project demonstrates automated UI testing of the TodoMVC application, includ
 - Clearing completed todos
 - Deleting todo items
 
+## Logging
+
+The framework uses Python's built-in logging module to provide detailed execution logs.
+
+Features
+- Logs every important test action (e.g. opening the application, adding, completing and deleting todos)
+- Automatically logs test start
+- Automatically logs test result (PASSED / FAILED)
+- Logs assertion errors and exceptions when a test fails
+- Writes logs both to the console and to a log file
+- Log file location: logs/test.log
+
+
 ## Design Pattern
 
 The project follows the **Page Object Model (POM)** design pattern to improve readability, maintainability and reusability of test code.

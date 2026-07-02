@@ -1,7 +1,8 @@
-from playwright.sync_api import expect
+from pages.base_page import BasePage
+from utils.logger import logger
 
 
-class TodoPage:
+class TodoPage(BasePage):
     """
        Page Object Model for the TodoMVC application.
 
@@ -14,7 +15,10 @@ class TodoPage:
 
        It encapsulates all interactions with the Todo list UI.
        """
+    URL = "https://demo.playwright.dev/todomvc"
+
     def __init__(self, page):
+        super().__init__(page)
 
         self.page = page
         self.title = page.locator("h1")
@@ -25,12 +29,14 @@ class TodoPage:
         self.active_button = page.get_by_text("Active")
         self.completed_button = page.get_by_role("link", name="Completed")
         self.clear_completed_button = page.get_by_role("button", name="Clear completed")
+        self.all_button = page.get_by_role("link", name="All")
 
-    def open(self):
+    def open_todo_app(self):
         """
             Opens the TodoMVC application.
         """
-        self.page.goto("https://demo.playwright.dev/todomvc")
+        logger.info("Opening Todo application")
+        self.open(self.URL)
 
     def add_todo(self, text):
         """
@@ -38,7 +44,8 @@ class TodoPage:
             Args:
                 text (str): The text of the todo item.
         """
-        self.input_box.fill(text)
+        logger.info(f"Adding todo: {text}")
+        self.fill(self.input_box, text)
         self.input_box.press("Enter")
 
     def complete_todo(self, text):
@@ -47,6 +54,7 @@ class TodoPage:
         Args:
             text (str): The text of the todo item to complete.
         """
+        logger.info(f"Completing todo: {text}")
         todo = self.page.locator(".todo-list li", has_text=text)
         todo.get_by_role("checkbox").check()
 
@@ -56,27 +64,36 @@ class TodoPage:
         Args:
             text (str): Text of the todo item to delete.
         """
+        logger.info(f"Deleting todo: {text}")
         todo = self.page.locator(".todo-list li", has_text=text)
         todo.hover()
-        todo.locator("button.destroy").click()
+        self.click(todo.locator("button.destroy"))
+
 
     def filter_active(self):
         """
             Filters and shows only active (not completed) todos.
         """
-        self.active_button.click()
+        logger.info("Filtering active todo items")
+        self.click(self.active_button)
 
     def filter_completed(self):
         """
             Filters and shows only completed todos.
         """
-        self.completed_button.click()
+        logger.info("Filtering completed todo items")
+        self.click(self.completed_button)
 
     def clear_completed(self):
         """
         Removes all completed todo items from the list.
         """
-        self.clear_completed_button.click()
+        logger.info("Clearing completed todo items")
+        self.click(self.clear_completed_button)
 
     def filter_all(self):
-        self.page.get_by_role("link", name="All").click()
+        """
+           Displays all todo items.
+        """
+        logger.info("Displaying all todo items")
+        self.click(self.all_button)

@@ -14,7 +14,15 @@ playwright-report/
 
 # IDE
 .idea/
+.vscode/
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Reports
+reports/
+report.html
+
+# Logs
+logs/
